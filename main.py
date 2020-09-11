@@ -19,8 +19,12 @@ TURNS_TO_DO = 4
 # ------ Configuration ------
 
 stepPins = [IN1,IN2,IN3,IN4] # Motor GPIO pins</p><p>
+stepDir = 1        # Set to 1 for clockwise
+                           # Set to -1 for anti-clockwise
 mode = HIGH_SPEED_MODE            # mode = 1: Low Speed ==> Higher Power
                            # mode = 0: High Speed ==> Lower Power
+waitTime = 0.002    # 2 miliseconds in whigh speed mode was the maximun speed got on my tests
+stepDir = 1
 if mode:              # Low Speed ==> High Power
     seq = [[1,0,0,1], # Define step sequence as shown in manufacturers datasheet
             [1,0,0,0], 
@@ -35,10 +39,7 @@ else:                    # High Speed ==> Low Power
             [0,1,0,0],
             [0,0,1,0],
             [0,0,0,1]]
-
 stepCount = len(seq)
-waitTime = 0.002    # 2 miliseconds in whigh speed mode was the maximun speed got on my tests
-stepDir = 1
 
 # ----- Methods ---------
 
@@ -47,7 +48,7 @@ def print_and_log(message):
     print (message)
 
 def init(): 
-    logging.basicConfig(filename='chicken.log', level=logging.DEBUG, format='%(asctime)s — %(name)s — %(levelname)s — %(message)s')
+    logging.basicConfig(filename='rideaux.log', level=logging.DEBUG, format='%(asctime)s — %(name)s — %(levelname)s — %(message)s')
 
 def open():
     print_and_log("Opening")
