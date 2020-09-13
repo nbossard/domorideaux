@@ -1,4 +1,5 @@
 # copytight nbossard 2020
+# coding=UTF-8
 
 import time
 import sys
@@ -14,7 +15,7 @@ IN4 = stepper(21)
 LOW_SPEED_MODE = 0
 HIGH_SPEED_MODE = 1
 STEPS_PER_TURN = 4000
-TURNS_TO_DO = 4
+TURNS_TO_DO = 10
 
 # ------ Configuration ------
 
@@ -23,8 +24,7 @@ stepDir = 1        # Set to 1 for clockwise
                            # Set to -1 for anti-clockwise
 mode = HIGH_SPEED_MODE            # mode = 1: Low Speed ==> Higher Power
                            # mode = 0: High Speed ==> Lower Power
-waitTime = 0.002    # 2 miliseconds in whigh speed mode was the maximun speed got on my tests
-stepDir = 1
+waitTime = 0.0040    # 2 miliseconds in whigh speed mode was the maximun speed got on my tests
 if mode:              # Low Speed ==> High Power
     seq = [[1,0,0,1], # Define step sequence as shown in manufacturers datasheet
             [1,0,0,0], 
@@ -50,23 +50,23 @@ def print_and_log(message):
 def init(): 
     logging.basicConfig(filename='rideaux.log', level=logging.DEBUG, format='%(asctime)s — %(name)s — %(levelname)s — %(message)s')
 
-def open():
+def open(parNbreTurns):
     print_and_log("Opening")
     print_and_log("Rotating clockwise")
-    stepDir = 1        # Set to 1 for clockwise,  Set to -1 for anti-clockwise
-    do()
+    global stepdir
+    do(parNbreTurns, 1)
 
-def close():
+def close(parNbreTurns):
     print_and_log("Opening")
     print_and_log("Rotating anti-clockwise")
-    stepDir = -1        # Set to 1 for clockwise,  Set to -1 for anti-clockwise
-    do()
+    global stepdir
+    do(parNbreTurns,-1)
 
-def do(): 
+def do(parNbreTurns, parStepDir): 
     stepCounter = 0
     stepTotal = 0
     quotient = 0
-    while quotient < TURNS_TO_DO :                          # Start main loop
+    while quotient < parNbreTurns :                          # Start main loop
         stepTotal += 1
         #print_and_log("Total of stes: " + str(stepTotal))
         quotient, remainder = divmod(stepTotal,STEPS_PER_TURN) 
@@ -78,12 +78,9 @@ def do():
                 xPin.on()
             else:
                 xPin.off()
-        stepCounter += stepDir
+        stepCounter += parStepDir
         if (stepCounter >= stepCount):
             stepCounter = 0
         if (stepCounter < 0):
-            stepCounter = stepCount+stepDir
+            stepCounter = stepCount+parStepDir
         time.sleep(waitTime)     # Wait before moving on
-
-init()
-close()
